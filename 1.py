@@ -71,9 +71,10 @@ def symp1(message):
 
 def symp(message):
     try:
+        print(message.text)
         transformations = (standard_transformations + (implicit_multiplication_application,))
         f = parse_expr(map_operations(message.text), transformations=transformations)
-        roots = solve(f)  # <-- вернуть все корни уравнения в виде списка
+        roots = [str(x) for x in solve(f)]  # <-- вернуть все корни уравнения в виде списка
         if len(roots) > 1:
             bot.send_message(message.chat.id, f'Ответ: {", ".join(roots)}')
         elif len(roots) == 0:
