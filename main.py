@@ -8,43 +8,16 @@ import sqlalchemy
 import sqlalchemy.orm as orm
 from sqlalchemy.orm import Session
 import sqlalchemy.ext.declarative as dec
+from data.Buildings import Building
+from data.Streets import Street
+from data.Monuments import Monument
 import httplib2
 import requests
+
 
 SqlAlchemyBase = dec.declarative_base()
 
 __factory = None
-
-
-class Monument(SqlAlchemyBase):
-    __tablename__ = 'monument'
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    information = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    full_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    link = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-
-
-class Building(SqlAlchemyBase):
-    __tablename__ = 'building'
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    information = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    full_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    link = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-
-
-class Street(SqlAlchemyBase):
-    __tablename__ = 'streets'
-    id = sqlalchemy.Column(sqlalchemy.Integer,
-                           primary_key=True, autoincrement=True)
-    name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    information = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    full_name = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-    link = sqlalchemy.Column(sqlalchemy.String, nullable=True)
-
 
 def global_init(db_file):
     global __factory
@@ -56,12 +29,14 @@ def global_init(db_file):
         raise Exception("Необходимо указать файл базы данных.")
 
     conn_str = f'sqlite:///{db_file.strip()}?check_same_thread=False'
+    print(f"Подключение к базе данных по адресу {conn_str}")
 
     engine = sqlalchemy.create_engine(conn_str, echo=False)
     __factory = orm.sessionmaker(bind=engine)
 
-    SqlAlchemyBase.metadata.create_all(engine)
+    from data import __all_models
 
+    SqlAlchemyBase.metadata.create_all(engine)
 
 def create_session() -> Session:
     global __factory
