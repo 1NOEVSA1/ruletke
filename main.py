@@ -14,6 +14,7 @@ from data.Monuments import Monument
 import httplib2
 import requests
 from random import choice
+import openai
 
 anecdot = ["""Тренер утешает проигравшего боксера:
 - Но в третьем раунде ты своего противника здорово напугал.
@@ -308,6 +309,20 @@ anecdot = ["""Тренер утешает проигравшего боксер�
            ]
 SqlAlchemyBase = dec.declarative_base()
 __factory = None
+openai.api_key = "token"
+
+
+def send(message):
+    response = openai.Completion.create(
+        model="text-davinci-003",
+        prompt=message.text,
+        temperature=0.9,
+        max_tokens=2000,
+        top_p=1.0,
+        frequency_penalty=0.0,
+        presence_penalty=0.6, )
+    bot.send_message(message.chat.id, response['choices'][0]['text'])
+    start_command(message, rol=1)
 
 
 def global_init(db_file):
@@ -329,7 +344,7 @@ def create_session() -> Session:
     return __factory()
 
 
-bot = telebot.TeleBot('5187622946:AAHdoul6bLiS7aAqC0oQdh1l2pyylk7R6RY')
+bot = telebot.TeleBot('token')
 error = """Уважаемый пользователь, к сожалению, ваш запрос не может быть выполнен из-за некорректного ввода данных. Пожалуйста, проверьте правильность введенной информации и повторите попытку."""
 
 
@@ -340,7 +355,8 @@ def start_command(message, rol=0):
         bot.send_message(message.chat.id,
                          f"""Здравствуйте, @{message.from_user.first_name}! Рады приветствовать Вас в нашем телеграмм боте. Мы создали его, чтобы облегчить Вам жизнь и сделать её более интересной и продуктивной. Здесь Вы можете получить доступ к множеству полезных функций, а также узнать много всего нового. Мы надеемся, что использование нашего бота станет для Вас приятным и удобным, и Вы найдете здесь все, что Вам нужно. Желаем приятного использования нашего телеграмм бота!""")
     keyboard = telebot.types.ReplyKeyboardMarkup(True)
-    keyboard.row('Математика', 'История', 'Анекдот')
+    keyboard.row('Математика', 'История')
+    keyboard.row('Анекдот', 'ChatGPT')
     bot.send_message(message.chat.id, 'Выберите кнопку:', reply_markup=keyboard)
     bot.register_next_step_handler(message, decide)
 
@@ -352,6 +368,9 @@ def decide(message):
         tice_function(message)
     if message.text == 'Анекдот':
         qice_function(message)
+    if message.text == 'ChatGPT':
+        bot.send_message(message.chat.id, 'Напишите запрос')
+        bot.register_next_step_handler(message, send)
 
 
 def qice_function(message):
