@@ -309,7 +309,7 @@ anecdot = ["""Тренер утешает проигравшего боксер�
            ]
 SqlAlchemyBase = dec.declarative_base()
 __factory = None
-openai.api_key = "token"
+openai.api_key = "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"
 
 
 def send(message):
@@ -344,7 +344,7 @@ def create_session() -> Session:
     return __factory()
 
 
-bot = telebot.TeleBot('token')
+bot = telebot.TeleBot('5187622946:AAHdoul6bLiS7aAqC0oQdh1l2pyylk7R6RY')
 error = """Уважаемый пользователь, к сожалению, ваш запрос не может быть выполнен из-за некорректного ввода данных. Пожалуйста, проверьте правильность введенной информации и повторите попытку."""
 
 
