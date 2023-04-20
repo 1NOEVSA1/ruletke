@@ -12,43 +12,43 @@
 
 Для работы приложения требуется установка библиотек, перечисленных в файле
 requirements.txt
-aiohttp            3.8.4
-aiosignal          1.3.1
-async-timeout      4.0.2
-attrs              23.1.0
-certifi            2022.12.7
-charset-normalizer 3.1.0
-colorama           0.4.6
-contourpy          1.0.7
-cycler             0.11.0
-fonttools          4.39.3
-frozenlist         1.3.3
-greenlet           2.0.2
-httplib2           0.22.0
-idna               3.4
-kiwisolver         1.4.4
-matplotlib         3.7.1
-mpmath             1.3.0
-multidict          6.0.4
-numexpr            2.8.4
-numpy              1.24.2
-openai             0.27.4
-packaging          23.1
-Pillow             9.5.0
-pip                21.3.1
-pyparsing          3.0.9
-pyTelegramBotAPI   4.11.0
-python-dateutil    2.8.2
-requests           2.28.2
-setuptools         60.2.0
-six                1.16.0
-SQLAlchemy         2.0.9
-sympy              1.11.1
-tqdm               4.65.0
-typing_extensions  4.5.0
-urllib3            1.26.15
-wheel              0.37.1
-yarl               1.8.2
+- aiohttp            3.8.4
+- aiosignal          1.3.1
+- async-timeout      4.0.2
+- attrs              23.1.0
+- certifi            2022.12.7
+- charset-normalizer 3.1.0
+- colorama           0.4.6
+- contourpy          1.0.7
+- cycler             0.11.0
+- fonttools          4.39.3
+- frozenlist         1.3.3
+- greenlet           2.0.2
+- httplib2           0.22.0
+- idna               3.4
+- kiwisolver         1.4.4
+- matplotlib         3.7.1
+- mpmath             1.3.0
+- multidict          6.0.4
+- numexpr            2.8.4
+- numpy              1.24.2
+- openai             0.27.4
+- packaging          23.1
+- Pillow             9.5.0
+- pip                21.3.1
+- pyparsing          3.0.9
+- pyTelegramBotAPI   4.11.0
+- python-dateutil    2.8.2
+- requests           2.28.2
+- setuptools         60.2.0
+- six                1.16.0
+- SQLAlchemy         2.0.9
+- sympy              1.11.1
+- tqdm               4.65.0
+- typing_extensions  4.5.0
+- urllib3            1.26.15
+- wheel              0.37.1
+- yarl               1.8.2
 Описание работы бота:
 1. Для запуска нужно ввести команду /start, бот присылает пользователю приветствие и предлагает клавиатуру и четырёх кнопок.
 	-Математика
@@ -84,3 +84,4 @@ yarl               1.8.2
 Перспектива развития проекта:
 В принципе всё что хотел я смог реализовать, но в дальнейшем можно увеличить базу данных добавив больше информации как о памятниках, улицах, здания, так о городах.
 Хостинг - PythonAnyWhere
+@ruletkebot
