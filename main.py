@@ -309,7 +309,7 @@ anecdot = ["""Тренер утешает проигравшего боксер�
            ]
 SqlAlchemyBase = dec.declarative_base()
 __factory = None
-openai.api_key = ""
+openai.api_key = "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"
 
 
 def send(message):
