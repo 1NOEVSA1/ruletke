@@ -314,7 +314,7 @@ anecdot = ["""Тренер утешает проигравшего боксер�
            ]
 SqlAlchemyBase = dec.declarative_base()
 __factory = None
-openai.api_key = "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"
+openai.api_key = ""
 
 
 def send(message):
@@ -474,9 +474,12 @@ def obrabot_mqn(message):
     if message.text == 'Вернуться назад':
         bot.register_next_step_handler(message, ice_function)
     else:
-        for user in session.query(Pol).filter(Pol.name == message.text):
-            bot.send_photo(message.chat.id, open(user.link, 'rb'), caption=f'{user.name}')
-            bot.send_message(message.chat.id, f'{user.information}')
+        try:
+            for user in session.query(Pol).filter(Pol.name == message.text):
+                bot.send_photo(message.chat.id, open(f'photo/{user.link}', 'rb'), caption=f'{user.name}')
+                bot.send_message(message.chat.id, f'{user.information}')
+        except Exception:
+            bot.send_message(message.chat.id, f'Ошибка')
     ice_function(message)
 
 
