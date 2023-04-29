@@ -11,7 +11,6 @@ import sqlalchemy.ext.declarative as dec
 from data.Buildings import Building
 from data.Streets import Street
 from data.Monuments import Monument
-from data import db_session
 from data.Pols import Pol
 import httplib2
 import requests
@@ -19,7 +18,6 @@ from random import choice
 import openai
 from io import BytesIO
 from PIL import Image
-import os
 
 anecdot = ["""Тренер утешает проигравшего боксера:
 - Но в третьем раунде ты своего противника здорово напугал.
