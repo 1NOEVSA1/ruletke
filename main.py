@@ -11,10 +11,15 @@ import sqlalchemy.ext.declarative as dec
 from data.Buildings import Building
 from data.Streets import Street
 from data.Monuments import Monument
+from data import db_session
+from data.Pols import Pol
 import httplib2
 import requests
 from random import choice
 import openai
+from io import BytesIO
+from PIL import Image
+import os
 
 anecdot = ["""Тренер утешает проигравшего боксера:
 - Но в третьем раунде ты своего противника здорово напугал.
@@ -309,7 +314,7 @@ anecdot = ["""Тренер утешает проигравшего боксер�
            ]
 SqlAlchemyBase = dec.declarative_base()
 __factory = None
-openai.api_key = ""
+openai.api_key = "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"
 
 
 def send(message):
@@ -347,6 +352,8 @@ def create_session() -> Session:
 bot = telebot.TeleBot('5187622946:AAHdoul6bLiS7aAqC0oQdh1l2pyylk7R6RY')
 error = """Уважаемый пользователь, к сожалению, ваш запрос не может быть выполнен из-за некорректного ввода данных. Пожалуйста, проверьте правильность введенной информации и повторите попытку."""
 
+a = []
+
 
 # команда /start
 @bot.message_handler(commands=['start'])
@@ -357,6 +364,7 @@ def start_command(message, rol=0):
     keyboard = telebot.types.ReplyKeyboardMarkup(True)
     keyboard.row('Математика', 'История')
     keyboard.row('Анекдот', 'ChatGPT')
+    keyboard.row('Пользовательские объекты')
     bot.send_message(message.chat.id, 'Выберите кнопку:', reply_markup=keyboard)
     bot.register_next_step_handler(message, decide)
 
@@ -368,6 +376,8 @@ def decide(message):
         tice_function(message)
     if message.text == 'Анекдот':
         qice_function(message)
+    if message.text == 'Пользовательские объекты':
+        ice_function(message)
     if message.text == 'ChatGPT':
         bot.send_message(message.chat.id, 'Напишите запрос')
         bot.register_next_step_handler(message, send)
@@ -377,6 +387,14 @@ def qice_function(message):
     global anecdot
     bot.send_message(message.chat.id, choice(anecdot))
     start_command(message, rol=1)
+
+
+def ice_function(message):
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    keyboard.row('Инструкция', 'Добавить')
+    keyboard.row('Посмотреть', 'Вернуться назад')
+    bot.send_message(message.chat.id, 'Выберите кнопку:', reply_markup=keyboard)
+    bot.register_next_step_handler(message, dice_roll)
 
 
 def tice_function(message):
@@ -396,10 +414,83 @@ def dice_function(message):
     bot.register_next_step_handler(message, dice_roll)
 
 
+def qce(message):
+    global_init('db/data_base.db')
+    session = create_session()
+    bot.send_message(message.chat.id, 'Пример как должно быть оформлено')
+    for user in session.query(Monument).filter(Monument.name == 'Памятник Ф.Э. Дзержинскому'):
+        load_photo(user.link)
+        bot.send_photo(message.chat.id, open('img.jpg', 'rb'), caption=f'{user.name}')
+        bot.send_message(message.chat.id, f'{user.information}\nРасположение:\n{user.full_name}')
+    ice_function(message)
+
+
+@bot.message_handler(content_types=['photo', 'caption'])
+def rce(message):
+    global a
+    photos = message.photo
+    last_photo = photos[-1]
+    caption = message.caption
+    file_id = last_photo.file_id
+    file_info = bot.get_file(file_id)
+    downloaded_file = bot.download_file(file_info.file_path)
+    q = Image.open(BytesIO(
+        downloaded_file))
+    q.save(f'photo/{caption}.png')
+    a.append(caption)
+    a.append(f'{caption}.png')
+    bot.send_message(message.chat.id, 'Отправьте информацию')
+    bot.register_next_step_handler(message, ce)
+
+
+def ce(message):
+    global a
+    a.append(message.text)
+    global_init('db/data_base.db')
+    pol = Pol()
+    pol.name = a[0]
+    pol.information = a[2]
+    pol.link = a[1]
+    db_sess = create_session()
+    db_sess.add(pol)
+    db_sess.commit()
+    a.clear()
+    ice_function(message)
+
+
+def mqn():
+    global_init('db/data_base.db')
+    session = create_session()
+    keyboard = telebot.types.ReplyKeyboardMarkup(True)
+    for user in session.query(Pol):
+        keyboard.row(user.name)
+    keyboard.row('Вернуться назад')
+    return keyboard
+
+
+def obrabot_mqn(message):
+    global_init('db/data_base.db')
+    session = create_session()
+    if message.text == 'Вернуться назад':
+        bot.register_next_step_handler(message, ice_function)
+    else:
+        for user in session.query(Pol).filter(Pol.name == message.text):
+            bot.send_photo(message.chat.id, open(user.link, 'rb'), caption=f'{user.name}')
+            bot.send_message(message.chat.id, f'{user.information}')
+    ice_function(message)
+
+
 def dice_roll(message):
     if message.text == 'Решение уравнений':
         bot.send_message(message.chat.id, 'Напишите уравнение:')
         bot.register_next_step_handler(message, symp)
+    elif message.text == 'Инструкция':
+        qce(message)
+    elif message.text == 'Посмотреть':
+        bot.send_message(message.chat.id, 'Выберите кнопку:', reply_markup=mqn())
+        bot.register_next_step_handler(message, obrabot_mqn)
+    elif message.text == 'Добавить':
+        bot.send_message(message.chat.id, 'Напишите отправьте фото объекта с подписью ввиде его названия:')
     elif message.text == 'Упрощение выражений':
         bot.send_message(message.chat.id, 'Напишите выражение:')
         bot.register_next_step_handler(message, symp1)
@@ -445,7 +536,7 @@ def locate(name):
 
 
 def obrabot_mon(message):
-    global_init('data_base.db')
+    global_init('db/data_base.db')
     session = create_session()
     if message.text == 'Вернуться назад':
         bot.register_next_step_handler(message, tice_function)
